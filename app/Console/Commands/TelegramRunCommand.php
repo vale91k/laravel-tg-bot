@@ -93,7 +93,7 @@ class TelegramRunCommand extends Command
                 return;
             }
 
-            Log::channel('single')->info('Telegram incoming', [
+            Log::channel('telegram')->info('incoming', [
                 'chat_id' => $chatId,
                 'user_id' => $userId,
                 'text' => mb_substr($text, 0, 500),
@@ -113,10 +113,11 @@ class TelegramRunCommand extends Command
                     $bot->sendMessage($formatted);
                 }
 
-                Log::channel('single')->info('Telegram outgoing', [
+                Log::channel('telegram')->info('outgoing', [
                     'chat_id' => $chatId,
-                    'text' => mb_substr($reply, 0, 300),
+                    'text' => mb_substr($reply, 0, 500),
                 ]);
+                $this->info("Сообщение отправлено в чат {$chatId}");
             } catch (\Throwable $e) {
                 $this->error((string) $e);
 
@@ -137,7 +138,7 @@ class TelegramRunCommand extends Command
                 break;
             } catch (ConnectException $e) {
                 $this->warn('Таймаут подключения к Telegram: ' . $e->getMessage());
-                Log::channel('single')->warning('Telegram connection timeout', ['message' => $e->getMessage()]);
+                Log::channel('telegram')->warning('connection_timeout', ['message' => $e->getMessage()]);
                 $this->info('Перезапуск через 5 сек...');
                 sleep(5);
             }

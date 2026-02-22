@@ -3,6 +3,7 @@
 namespace App\Bot\Client\DeepSeek;
 
 use App\Bot\Client\AiClientInterface;
+use Illuminate\Support\Facades\Log;
 use PvSource\Aivory\Client as AivoryClient;
 use PvSource\Aivory\LLM\Turn\Turn;
 
@@ -57,6 +58,11 @@ class DeepSeekClient implements AiClientInterface
             throw (new \RuntimeException('DEEPSEEK_API_KEY не задан в .env'));
         }
 
+        Log::channel('deepseek')->info('request', [
+            'user_message' => mb_substr($userMessage, 0, 2000),
+            'system_prompt' => $systemPrompt !== null && $systemPrompt !== '' ? mb_substr($systemPrompt, 0, 500) : null,
+        ]);
+
         $provider = $this->getClient()->getProvider();
 
         $builder = Turn::query()
@@ -73,7 +79,12 @@ class DeepSeekClient implements AiClientInterface
         $turn = $builder->send();
         $response = $turn->getResponse();
         $assistant = $response->getAssistant();
+        $reply = trim($assistant->content ?? '');
 
-        return trim($assistant->content ?? '');
+        Log::channel('deepseek')->info('response', [
+            'text' => mb_substr($reply, 0, 2000),
+        ]);
+
+        return $reply;
     }
 }
