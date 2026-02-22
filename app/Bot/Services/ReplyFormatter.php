@@ -7,20 +7,25 @@ namespace App\Bot\Services;
  */
 class ReplyFormatter
 {
-    /** Символы-заменители для сравнений: выглядят как < и >, но не ломают HTML. */
-    private const ANGLE_GT = '›';  // U+203A
-    private const ANGLE_LT = '‹';  // U+2039
+    /** Символы «больше»/«меньше» (Unicode), чтобы не слать < > в HTML и не показывать &lt;/&gt;. */
+    private const CHAR_GT = '›';  // U+203A
+    private const CHAR_LT = '‹';  // U+2039
 
     /**
      * Форматирует сырой ответ ИИ для Telegram (HTML).
      * **жирный** → <b>жирный</b>, *курсив* → <i>курсив</i>, `код` → <code>код</code>.
-     * Символы < и > экранируются, затем &gt;/&lt; заменяются на ›/‹ — сравнения выглядят нормально, 400 нет.
+     * Сравнения: &gt;/&lt; заменяются на символы ›/‹ — Telegram не декодирует &amp;lt; в <.
      */
     public function formatToTelegramHtml(string $raw): string
     {
         $text = trim($raw);
         $text = $this->convertMarkdownToHtml($text);
-        $text = $this->replaceAngleEntitiesWithUnicode($text);
+        // После e() сущности уже в виде &amp;gt; и &amp;lt;, поэтому заменяем оба варианта.
+        $text = str_replace(
+            ['&amp;gt;', '&amp;lt;', '&gt;', '&lt;'],
+            [self::CHAR_GT, self::CHAR_LT, self::CHAR_GT, self::CHAR_LT],
+            $text
+        );
 
         return $text;
     }
@@ -92,11 +97,4 @@ class ReplyFormatter
         return str_replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], $s);
     }
 
-    /**
-     * Заменяет &gt; и &lt; на символы › и ‹ — визуально как сравнения, без сырых < > в сообщении.
-     */
-    private function replaceAngleEntitiesWithUnicode(string $text): string
-    {
-        return str_replace(['&gt;', '&lt;'], [self::ANGLE_GT, self::ANGLE_LT], $text);
-    }
 }
