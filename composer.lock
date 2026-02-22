@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7f48ad0286b088d092f5dca0d2cfe0d",
+    "content-hash": "91e42976e3fedf000bd1717270059786",
     "packages": [
         {
             "name": "brick/math",
@@ -3240,6 +3240,59 @@
                 "source": "https://github.com/bobthecow/psysh/tree/v0.12.20"
             },
             "time": "2026-02-11T15:05:28+00:00"
+        },
+        {
+            "name": "pv-source/aivory",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pvSource/aivory.git",
+                "reference": "dc2318f7eab734a4b18a781c676e475b10b0521c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pvSource/aivory/zipball/dc2318f7eab734a4b18a781c676e475b10b0521c",
+                "reference": "dc2318f7eab734a4b18a781c676e475b10b0521c",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.10",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PvSource\\Aivory\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PvSource",
+                    "email": "pavelsergmgtu@gmail.com"
+                }
+            ],
+            "description": "PHP библиотека для работы с AI LLM-провайдерами (OpenAI-совместимое API). Единый интерфейс с поддержкой типизированных ответов, JSON Schema и fluent API, вдохновленным Eloquent",
+            "keywords": [
+                "ChatGpt",
+                "ai",
+                "api",
+                "deepseek",
+                "eloquent",
+                "fluent-api",
+                "gpt",
+                "json-schema",
+                "llm",
+                "openai"
+            ],
+            "support": {
+                "issues": "https://github.com/pvSource/aivory/issues",
+                "source": "https://github.com/pvSource/aivory/tree/v0.1.0"
+            },
+            "time": "2026-02-17T09:43:17+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
