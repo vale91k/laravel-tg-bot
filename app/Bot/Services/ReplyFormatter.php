@@ -50,40 +50,45 @@ class ReplyFormatter
 
     private function convertMarkdownToHtml(string $text): string
     {
-        // Блоки кода ```...``` → <pre>...</pre>
-        $text = preg_replace_callback('/```(\w*)\n?(.*?)```/s', function ($m) {
-            $code = $this->e($m[2]);
+        // 1. Сначала выносим блоки кода в плейсхолдеры, чтобы _ и * внутри не превращались в курсив/жирный
+        $codePlaceholders = [];
+        $idx = 0;
 
-            return '<pre>' . $code . '</pre>';
+        $text = preg_replace_callback('/```(\w*)\n?(.*?)```/s', function ($m) use (&$codePlaceholders, &$idx) {
+            $key = "\x00CODE" . ($idx++) . "\x00";
+            $codePlaceholders[$key] = '<pre>' . $this->e($m[2]) . '</pre>';
+
+            return $key;
         }, $text);
 
-        // Инлайн `код`
-        $text = preg_replace_callback('/`([^`]+)`/', function ($m) {
-            return '<code>' . $this->e($m[1]) . '</code>';
+        $text = preg_replace_callback('/`([^`]+)`/', function ($m) use (&$codePlaceholders, &$idx) {
+            $key = "\x00CODE" . ($idx++) . "\x00";
+            $codePlaceholders[$key] = '<code>' . $this->e($m[1]) . '</code>';
+
+            return $key;
         }, $text);
 
-        // **жирный** и __жирный__
+        // 2. Жирный и курсив (внутри кода уже нет — он в плейсхолдерах)
         $text = preg_replace_callback('/\*\*(.+?)\*\*/s', fn ($m) => '<b>' . $this->e($m[1]) . '</b>', $text);
         $text = preg_replace_callback('/__(.+?)__/s', fn ($m) => '<b>' . $this->e($m[1]) . '</b>', $text);
-
-        // *курсив*
         $text = preg_replace_callback('/(?<!\w)\*(.+?)\*(?!\w)/s', fn ($m) => '<i>' . $this->e($m[1]) . '</i>', $text);
         $text = preg_replace_callback('/(?<!\w)_(.+?)_(?!\w)/s', fn ($m) => '<i>' . $this->e($m[1]) . '</i>', $text);
-
-        // ### Заголовок
         $text = preg_replace_callback('/^###?\s+(.+)$/m', fn ($m) => '<b>' . $this->e(trim($m[1])) . '</b>', $text);
 
-        // Экранируем оставшиеся <, >, & (теги уже вставлены, защищаем их плейсхолдерами)
-        $placeholders = [];
+        // 3. Экранируем оставшиеся <, >, &; теги защищаем плейсхолдерами
+        $tagPlaceholders = [];
         $i = 0;
-        $text = preg_replace_callback('/<\/?(?:b|i|code|pre)>/', function ($m) use (&$placeholders, &$i) {
+        $text = preg_replace_callback('/<\/?(?:b|i|code|pre)>/', function ($m) use (&$tagPlaceholders, &$i) {
             $key = "\x00P" . ($i++) . "\x00";
-            $placeholders[$key] = $m[0];
+            $tagPlaceholders[$key] = $m[0];
 
             return $key;
         }, $text);
         $text = $this->e($text);
-        $text = str_replace(array_keys($placeholders), array_values($placeholders), $text);
+        $text = str_replace(array_keys($tagPlaceholders), array_values($tagPlaceholders), $text);
+
+        // 4. Возвращаем блоки кода на место
+        $text = str_replace(array_keys($codePlaceholders), array_values($codePlaceholders), $text);
 
         return $text;
     }
