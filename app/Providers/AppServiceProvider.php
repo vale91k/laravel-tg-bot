@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Bot\Client\AiClientInterface;
 use App\Bot\Client\DeepSeek\DeepSeekClient;
+use App\Bot\Services\ReplyFormatter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
                 )),
             };
         });
+
+        $this->app->singleton(ReplyFormatter::class);
     }
 
     /**

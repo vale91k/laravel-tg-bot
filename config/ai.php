@@ -6,22 +6,28 @@ return [
     |--------------------------------------------------------------------------
     | AI Client (драйвер)
     |--------------------------------------------------------------------------
-    | Какой клиент использовать для ответов бота: deepseek, openai (будущие).
-    | Меняя значение, подставляется соответствующая реализация AiClientInterface.
+    | Какой клиент использовать: deepseek, openai (будущие).
+    | Параметры каждого клиента — в своём ключе ниже; в .env — свои переменные.
     */
     'client' => env('AI_CLIENT', 'deepseek'),
 
     /*
-    | API ключ провайдера (DeepSeek, OpenAI и т.д.)
+    |--------------------------------------------------------------------------
+    | Параметры клиентов (каждый читает только свой блок)
+    |--------------------------------------------------------------------------
     */
-    'api_key' => env('AI_API_KEY', ''),
+    'deepseek' => [
+        'api_key' => env('DEEPSEEK_API_KEY', ''),
+        'model' => env('DEEPSEEK_MODEL', 'deepseek-chat'),
+        'temperature' => (float) env('DEEPSEEK_TEMPERATURE', 0.7),
+        'max_tokens' => (int) env('DEEPSEEK_MAX_TOKENS', 1000),
+    ],
 
-    /*
-    | Модель по умолчанию (например deepseek-chat, gpt-4o)
-    */
-    'model' => env('AI_MODEL', 'deepseek-chat'),
-
-    'temperature' => (float) env('AI_TEMPERATURE', 0.7),
-    'max_tokens' => (int) env('AI_MAX_TOKENS', 1000),
+    // Будущий клиент — свои ключи, например OPENAI_API_KEY, OPENAI_MODEL.
+    // 'openai' => [
+    //     'api_key' => env('OPENAI_API_KEY', ''),
+    //     'model' => env('OPENAI_MODEL', 'gpt-4o'),
+    //     ...
+    // ],
 
 ];

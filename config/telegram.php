@@ -10,4 +10,24 @@ return [
     */
     'token' => env('TELEGRAM_BOT_TOKEN', ''),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Таймауты и прокси
+    |--------------------------------------------------------------------------
+    | Если api.telegram.org недоступен (блокировка, фаервол), будет cURL 28.
+    | Можно увеличить таймаут или задать прокси (например socks5://127.0.0.1:1080).
+    */
+    'client_timeout' => (int) env('TELEGRAM_CLIENT_TIMEOUT', 30),
+    'polling_timeout' => (int) env('TELEGRAM_POLLING_TIMEOUT', 30),
+    'proxy' => env('TELEGRAM_PROXY', null),
+
+    /*
+    | Отключить HTTP/2 (иногда PHP/cURL с ним таймаутит, хотя curl из терминала ок).
+    */
+    'enable_http2' => env('TELEGRAM_ENABLE_HTTP2', false),
+
+    /*
+    | Формат ответов ИИ: html (жирный/курсив/код, сравнения как › и ‹) или plain (без разметки).
+    */
+    'reply_format' => env('TELEGRAM_REPLY_FORMAT', 'html'),
 ];

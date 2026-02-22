@@ -9,7 +9,7 @@ use PvSource\Aivory\LLM\Turn\Turn;
 /**
  * Клиент ИИ через DeepSeek (библиотека pv-source/aivory).
  *
- * Конфигурация в config/ai.php, ключи: AI_API_KEY, AI_MODEL, AI_TEMPERATURE, AI_MAX_TOKENS.
+ * Параметры только свои: config/ai.php → ключ "deepseek", в .env — DEEPSEEK_API_KEY, DEEPSEEK_MODEL и т.д.
  */
 class DeepSeekClient implements AiClientInterface
 {
@@ -29,11 +29,13 @@ class DeepSeekClient implements AiClientInterface
 
     public static function fromConfig(): self
     {
+        $config = config('ai.deepseek', []);
+
         return new self(
-            apiKey: config('ai.api_key', ''),
-            model: config('ai.model', self::DEFAULT_MODEL),
-            temperature: (float) config('ai.temperature', 0.7),
-            maxTokens: (int) config('ai.max_tokens', 1000),
+            apiKey: $config['api_key'] ?? '',
+            model: $config['model'] ?? self::DEFAULT_MODEL,
+            temperature: (float) ($config['temperature'] ?? 0.7),
+            maxTokens: (int) ($config['max_tokens'] ?? 1000),
         );
     }
 
@@ -52,7 +54,7 @@ class DeepSeekClient implements AiClientInterface
     public function reply(string $userMessage, ?string $systemPrompt = null): string
     {
         if ($this->apiKey === '') {
-            throw (new \RuntimeException('AI_API_KEY не задан в .env'));
+            throw (new \RuntimeException('DEEPSEEK_API_KEY не задан в .env'));
         }
 
         $provider = $this->getClient()->getProvider();
