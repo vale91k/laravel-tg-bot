@@ -35,7 +35,10 @@ TELEGRAM_WEBHOOK_URL=  # для продакшена (HTTPS)
 app/
   Bot/
     Handlers/       # команды и обработчики сообщений
-    Services/       # ИИ и прочая логика
+    Client/        # ИИ: интерфейс + реализации (DeepSeek, OpenAI и т.д.)
+      AiClientInterface.php
+      DeepSeek/
+        DeepSeekClient.php
   Console/
     Commands/
       TelegramBotCommand.php   # artisan telegram:run
